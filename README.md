@@ -1,3 +1,15 @@
+# The Voice Recorder
+A good voice recorder that runs on phones and desktops.
+
+## Why
+My wife told me her dream this morning after we got up. Actually, she dreams almost every night. I am so fascinated about her dream worlds, and I want to put it down somewhere so I can revisit them laster. It's a shame to not record them! yeah, that good!
+
+For this, I need a voice recorder on my phone that I can use almost instantly. I also don't like Ads or other stuffs that are irrelavent on my screen while using the app. Most importantly, I care security a lot.
+
+What do you do? You create it by yourself.
+
+
+# Development guide
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
