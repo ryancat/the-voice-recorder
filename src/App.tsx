@@ -1,25 +1,50 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './App.scss';
 
 class App extends Component {
+  private playerRef = createRef<HTMLAudioElement>()
+
+  constructor(props: object) {
+    super(props);
+    
+    navigator.mediaDevices.enumerateDevices()
+    .then(devices => {
+      // Get audo input device
+      devices = devices.filter(d => d.kind === 'audioinput');
+      
+      navigator.mediaDevices.getUserMedia({
+        audio: {
+          deviceId: devices[0].deviceId
+        },
+        video: false
+      })
+      .then(this.handleSuccess.bind(this));
+    });
+  }
+
+  handleSuccess(stream: MediaStream) {
+    const player: HTMLAudioElement | null = this.playerRef.current;
+
+    if (!player) {
+      // Environment doesn't support HTML5
+      console.warn('Need HTML5 support to run app');
+      return;
+    }
+
+    // Feature detection
+    if (window.URL) {
+      player.src = window.URL.createObjectURL(stream);
+    }
+    else {
+      player.src = stream.toString();
+    }
+  }
+  
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <audio ref={this.playerRef} controls></audio>
       </div>
     );
   }
