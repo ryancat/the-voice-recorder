@@ -12,7 +12,7 @@ class App extends Component {
     .then(devices => {
       // Get audo input device
       devices = devices.filter(d => d.kind === 'audioinput');
-      
+
       navigator.mediaDevices.getUserMedia({
         audio: {
           deviceId: devices[0].deviceId
@@ -33,12 +33,19 @@ class App extends Component {
     }
 
     // Feature detection
-    if (window.URL) {
-      player.src = window.URL.createObjectURL(stream);
-    }
-    else {
-      player.src = stream.toString();
-    }
+    // if (window.URL) {
+    //   player.src = window.URL.createObjectURL(stream);
+    // }
+    // else {
+    //   player.src = stream.toString();
+    // }
+
+    const context = new AudioContext();
+    const source = context.createMediaStreamSource(stream);
+    const processor = context.createScriptProcessor(1024, 1, 1);
+
+    source.connect(processor);
+    processor.connect(context.destination);
   }
   
   render() {
