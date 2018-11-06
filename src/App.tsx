@@ -9,6 +9,7 @@ import './App.scss';
 
 class App extends Component {
   private playerRef = createRef<HTMLAudioElement>()
+  private audioVisualRef = createRef<HTMLCanvasElement>()
   private mediaRecorder: MediaRecorder | null = null
   private chunks: any[] = []
 
@@ -87,34 +88,39 @@ class App extends Component {
   initMediaRecorder(stream: MediaStream) {
     this.mediaRecorder = new MediaRecorder(stream);
 
-    this.mediaRecorder.ondataavailable = (evt: MediaRecorderDataAvailableEvent) => {
-      this.chunks.push(evt.data);
+    // Binding event handlers
+    this.mediaRecorder.ondataavailable = this.handleMediaRecorderDataAvailable.bind(this);
+    this.mediaRecorder.onstart = this.handleMediaRecorderStart.bind(this);
+    this.mediaRecorder.onstop = this.handleMediaRecorderStop.bind(this);
+  }
+
+  handleMediaRecorderDataAvailable(evt: MediaRecorderDataAvailableEvent) {
+    this.chunks.push(evt.data);
+  }
+
+  handleMediaRecorderStart() {
+    console.log('start recording');
+  }
+
+  handleMediaRecorderStop() {
+    console.log('stop recording');
+
+    const blob = new Blob(this.chunks, {
+      type: 'audio/ogg; codecs=opus'
+    });
+    this.chunks = [];
+
+    const player = this.playerRef.current;
+
+    if (!player) {
+      // Environment doesn't support HTML5
+      console.warn('Need HTML5 support to run app');
+      return;
     }
 
-    this.mediaRecorder.onstart = () => {
-      console.log('start recording');
-    }
-
-    this.mediaRecorder.onstop = () => {
-      console.log('stop recording');
-
-      const blob = new Blob(this.chunks, {
-        type: 'audio/ogg; codecs=opus'
-      });
-      this.chunks = [];
-      
-      const player = this.playerRef.current;
-
-      if (!player) {
-        // Environment doesn't support HTML5
-        console.warn('Need HTML5 support to run app');
-        return;
-      }
-
-      // Feature detection
-      if (window.URL) {
-        player.src = window.URL.createObjectURL(blob);
-      }
+    // Feature detection
+    if (window.URL) {
+      player.src = window.URL.createObjectURL(blob);
     }
   }
 
@@ -136,10 +142,11 @@ class App extends Component {
   
   render() {
     return (
-      <div className="App">
+      <div className="app">
         <button onClick={this.startRecord.bind(this)}>Record</button>
         <button onClick={this.stopRecord.bind(this)}>Stop</button>
         <audio ref={this.playerRef} controls></audio>
+        <canvas ref={this.audioVisualRef}></canvas>
       </div>
     );
   }
