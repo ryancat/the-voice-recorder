@@ -3,7 +3,7 @@ import { appReducer } from './appReducer';
 import { recorderReducer } from './recorderReducer';
 import { playerReducer } from './playerReducer';
 
-export default combineReducers({
+export const combinedReducer = combineReducers({
   // Reducers go here
   app: appReducer,
   recorder: recorderReducer,

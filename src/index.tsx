@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import reducer from './reducers';
+import { combinedReducer } from './reducers';
 import { createLogger } from 'redux-logger';
 import { BrowserRouter } from 'react-router-dom'
 import { AppContainer } from './containers/AppContainer';
@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const store = createStore(
-  reducer,
+  combinedReducer,
   applyMiddleware(...middleware)
 )
 

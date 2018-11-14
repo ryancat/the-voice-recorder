@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+import AudioViz from './AudioViz';
+import ControlPanel from './ControlPanel';
 
-const StyledRecorderComponent = styled.div`
+const StyledRecorder = styled.div`
   // Styles for recorder component
   position: absolute;
   top: 0;
@@ -12,17 +14,17 @@ const StyledRecorderComponent = styled.div`
   flex-direction: column;
 `;
 
-export class RecorderComponent extends React.Component {
+export class Recorder extends React.Component {
   // constructor() {
   //   super();
   // }
 
   render() {
     return (
-      <StyledRecorderComponent>
+      <StyledRecorder>
         <AudioViz></AudioViz>
         <ControlPanel></ControlPanel>
-      </StyledRecorderComponent>
+      </StyledRecorder>
     )
   }
 }
