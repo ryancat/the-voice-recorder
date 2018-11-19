@@ -8,6 +8,6 @@ const mapStateToProps = () => ({})
 //   mapStateToProps
 // )(App));
 
-export const AppContainer = withRouter<{}>(connect<{}>(
+export const AppContainer = connect<{}>(
   mapStateToProps
-)(App));
+)(App);

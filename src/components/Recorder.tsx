@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import AudioViz from './AudioViz';
-import ControlPanel from './ControlPanel';
+import { AudioViz } from './AudioViz';
+// import ControlPanel from './ControlPanel';
 
 const StyledRecorder = styled.div`
   // Styles for recorder component
@@ -23,7 +23,7 @@ export class Recorder extends React.Component {
     return (
       <StyledRecorder>
         <AudioViz></AudioViz>
-        <ControlPanel></ControlPanel>
+        {/* <ControlPanel></ControlPanel> */}
       </StyledRecorder>
     )
   }

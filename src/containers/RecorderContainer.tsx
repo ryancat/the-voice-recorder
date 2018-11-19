@@ -1,9 +1,9 @@
-import { withRouter } from 'react-router-dom';
+// import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Recorder } from '../components/Recorder';
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = () => ({});
 
-export const RecorderContainer = withRouter(connect(
+export const RecorderContainer = connect(
   mapStateToProps
-)(Recorder));
+)(Recorder);
