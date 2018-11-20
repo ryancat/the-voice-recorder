@@ -2,9 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { CanvasRenderer } from '../renderers/CanvasRenderer';
-import { SvgRenderer } from '../renderers/SvgRenderer';
-import { IAudioViz, RendererType } from '../types';
+import { IAudioViz, RendererType, IRenderer, RendererElement } from '../types';
 
 const StyledAudioViz = styled.div`
   // Styles for AudioViz component
@@ -12,12 +10,13 @@ const StyledAudioViz = styled.div`
   height: 61.8%;
 `;
 
-type Renderer = CanvasRenderer | SvgRenderer;
-
 export class AudioViz extends React.Component<IAudioViz> {
+  private readonly canvasRef = React.createRef<HTMLCanvasElement>()
+  private readonly svgRef = React.createRef<SVGSVGElement>()
+  private vizElement?: RendererElement
   private loopBatch: Array<() => void> = []
-  private renderer: Renderer | undefined = undefined
-  private cachedRendererMap: Partial<Record<RendererType, Renderer>> = {}
+  private renderer?: IRenderer
+  private cachedRendererMap: Partial<Record<RendererType, IRenderer>> = {}
 
   constructor(props: IAudioViz) {
     super(props);
@@ -25,6 +24,9 @@ export class AudioViz extends React.Component<IAudioViz> {
   }
 
   componentDidMount() {
+    // Now the viz elements are available, we will need to connect them with the
+    // corresponding renderer
+
     // When component mount, the viz element will be in DOM
     this.loopBatch.push(this.update.bind(this));    
   }
@@ -58,63 +60,58 @@ export class AudioViz extends React.Component<IAudioViz> {
       // Update the renderer with animation loop
       this.renderer.resize(this.props.width, this.props.height);
 
-      this.renderer.putOnScreen();
+      // Draw on the viz element
+      if (this.vizElement) {
+        this.renderer.drawToElement(this.vizElement);
+      }
+      
       this.renderer.dirty = false;
     }
   }
 
-  /**
-   * Switch to the current renderer type from props
-   */
-  switchRenderer() {
-    let element;
+  // getVizElement() {
+  //   let element;
     
-    // Switch to the correponding renderer.
-    // If not exist in cache, create one.
-    switch(this.props.rendererType) {
-      case RendererType.Canvas:
-        if (typeof this.cachedRendererMap[RendererType.Canvas] === 'undefined') {
-          element = <canvas></canvas>
-          this.cachedRendererMap[RendererType.Canvas] = new CanvasRenderer({
-            element: element
-          });
-        }
+  //   // Switch to the correponding renderer.
+  //   // If not exist in cache, create one.
+  //   switch(this.props.rendererType) {
+  //     case RendererType.Canvas:
+  //       if (typeof this.cachedRendererMap[RendererType.Canvas] === 'undefined') {
+  //         element = <canvas ref={this.vizElementRef}></canvas>
+  //       }
         
-        this.renderer = this.cachedRendererMap[RendererType.Canvas];
-        break;
+  //       this.renderer = this.cachedRendererMap[RendererType.Canvas];
+  //       break;
 
-      case RendererType.SVG:
-        if (typeof this.cachedRendererMap[RendererType.SVG] === 'undefined') {
-          this.cachedRendererMap[RendererType.SVG] = new SvgRenderer();
-        }
+  //     case RendererType.SVG:
+  //       if (typeof this.cachedRendererMap[RendererType.SVG] === 'undefined') {
+  //         this.cachedRendererMap[RendererType.SVG] = new SvgRenderer();
+  //       }
 
-        this.renderer = this.cachedRendererMap[RendererType.SVG];
-        break;
+  //       this.renderer = this.cachedRendererMap[RendererType.SVG];
+  //       break;
 
-      default:
-        throw new Error(`Unexpected renderer type: ${this.props.rendererType}`)
-    }
+  //     default:
+  //       throw new Error(`Unexpected renderer type: ${this.props.rendererType}`)
+  //   }
 
-    return element;
-  }
 
-  getVizElement() {
-    this.switchRenderer();
+  //   if (!this.renderer) {
+  //     throw new Error('AudioViz renderer not found');
+  //   }
 
-    if (!this.renderer) {
-      throw new Error('AudioViz renderer not found');
-    }
+  //   // Dirty the viz element
+  //   this.renderer.dirty = true;
 
-    // Dirty the viz element
-    this.renderer.dirty = true;
-
-    return this.renderer.element;
-  }
+  //   return element;
+  // }
 
   render() {
     return (
       <StyledAudioViz>
-        {this.getVizElement()}
+        <canvas ref={this.canvasRef}></canvas>
+        <svg ref={this.svgRef}></svg>
+        {/* {this.getVizElement()} */}
       </StyledAudioViz>
     )
   }

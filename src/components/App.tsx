@@ -4,9 +4,11 @@ import styled from 'styled-components';
 
 import { RecorderContainer } from '../containers/RecorderContainer';
 
-export const App = styled(({className}: {
-  className: string;
-}) => {
+interface IAppProps {
+  className?: string;
+}
+
+export const App = styled(({className}: IAppProps) => {
   return (
     <div id='the-voice-recorder-app' className={className}>
         <Route path='/' component={RecorderContainer} />

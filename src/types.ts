@@ -1,4 +1,6 @@
 import { Action, Dispatch } from 'redux';
+import { CanvasRenderer } from './renderers/CanvasRenderer';
+import { SvgRenderer } from './renderers/SvgRenderer';
 
 /***** Enums *****/
 export enum RecorderActionType {
@@ -44,6 +46,9 @@ export enum VizType {
 }
 
 /***** Types *****/
+export type Renderer = CanvasRenderer | SvgRenderer;
+
+export type RendererElement = HTMLCanvasElement | SVGElement;
 
 /***** Interfaces *****/
 // Actions
@@ -80,4 +85,19 @@ export interface IAudioViz {
   // analyser: AnalyserNode,
   // The audio viz are using streaming data, not static data
   // dataValues: number[],
+}
+
+// Classes
+/**
+ * T: element type
+ */
+export interface IRenderer {
+  type: RendererType;
+  dirty: boolean;
+  drawToElement(element: RendererElement): void;
+  resize(width: number, height: number): void;
+}
+
+// Others
+export interface IRendererOptions {
 }
