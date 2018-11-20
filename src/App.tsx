@@ -86,7 +86,7 @@ class App extends Component {
     }
 
     canvas.width = window.innerWidth;
-    canvas.height = canvas.width * 0.2;
+    canvas.height = canvas.width * 0.5;
   }
 
   initAudioViz(stream: MediaStream) {

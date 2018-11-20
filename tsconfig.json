@@ -12,7 +12,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    // Add 'es2015.iterable' to the default es5 target libs to support iterable in function generator
+    "lib": ["es5", "dom", "scripthost", "es2015.iterable"]
   },
   "include": [
     "src"

@@ -1,6 +1,8 @@
 import React from 'react';
+// import { dispatch } from 'redux';
 import styled from 'styled-components';
 import { AudioViz } from './AudioViz';
+import { RendererType, VizType, IRecorderProps } from '../types';
 // import ControlPanel from './ControlPanel';
 
 const StyledRecorder = styled.div`
@@ -14,15 +16,59 @@ const StyledRecorder = styled.div`
   flex-direction: column;
 `;
 
-export class Recorder extends React.Component {
-  // constructor() {
-  //   super();
+export class Recorder extends React.Component<IRecorderProps> {
+  containerRef = React.createRef<HTMLDivElement>()
+  // private mediaRecorder: MediaRecorder | null = null
+  // private audioContext: AudioContext = new AudioContext()
+  // private chunks: any[] = []
+
+  constructor(props: IRecorderProps) {
+    super(props);
+    // this.startAudioSource();
+  }
+
+  // /**
+  //  * Start audio source to get audio data
+  //  */
+  // startAudioSource() {
+  //   if (!navigator.mediaDevices || 
+  //     !navigator.mediaDevices.enumerateDevices ||
+  //     !navigator.mediaDevices.getUserMedia
+  //   ) {
+  //     throw new Error('Environment doesn\'t support media devices API');
+  //   }
+
+  //   navigator.mediaDevices.enumerateDevices()
+  //   .then(devices => {
+  //     // Get audo input device
+  //     devices = devices.filter(d => d.kind === 'audioinput');
+
+  //     navigator.mediaDevices.getUserMedia({
+  //       audio: {
+  //         deviceId: devices[0].deviceId
+  //       },
+  //       video: false
+  //     })
+  //     .then(this.handleSuccess.bind(this))
+  //     .catch(err => {
+  //       throw new Error(`navigator.mediaDevices.getUserMedia doesn\'t support: ${err}`);
+  //     });
+  //   })
+  //   .catch(err => {
+  //     throw new Error(`navigator.mediaDevices.enumerateDevices doesn\'t support: ${err}`);
+  //   });
   // }
 
   render() {
     return (
-      <StyledRecorder>
-        <AudioViz></AudioViz>
+      <StyledRecorder ref={this.containerRef}>
+        <AudioViz
+          rendererType={RendererType.Canvas}
+          width={this.containerRef.current ? this.containerRef.current.offsetWidth : 0}
+          height={this.containerRef.current ? this.containerRef.current.offsetHeight * 0.618 : 0}
+          type={VizType.Line}
+          // analyser={this.analyser}
+        ></AudioViz>
         {/* <ControlPanel></ControlPanel> */}
       </StyledRecorder>
     )

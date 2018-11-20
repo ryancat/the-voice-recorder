@@ -1,6 +1,11 @@
+import { Action, Dispatch } from 'redux';
+
 /***** Enums *****/
 export enum RecorderActionType {
   GO_TO_READY = 'GO_TO_READY',
+  GET_ENUMERATE_DEVICES = 'GET_ENUMERATE_DEVICES',
+  GET_ENUMERATE_DEVICES_FAILED = 'GET_ENUMERATE_DEVICES_FAILED',
+  GET_ENUMERATE_DEVICES_SUCCEEDED = 'GET_ENUMERATE_DEVICES_SUCCEEDED',
 }
 
 export enum AppActionType {
@@ -29,12 +34,25 @@ export enum AppMode {
   Player,
 }
 
-/***** Interfaces *****/
-export interface IAction {
-  type: RecorderActionType | AppActionType;
-  data?: object;
+export enum RendererType {
+  Canvas = 'canvas',
+  SVG = 'svg',
 }
 
+export enum VizType {
+  Line = 'line',
+}
+
+/***** Types *****/
+
+/***** Interfaces *****/
+// Actions
+export interface IAction extends Action<RecorderActionType | AppActionType> {}
+
+// Dispatches
+export interface IDispatch extends Dispatch<IAction> {}
+
+// Component Props
 export interface IRecording {
   // image url
   cover?: string;
@@ -45,4 +63,21 @@ export interface IRecording {
     endTime: number;
     blob?: object;
   }>;
+}
+
+export interface IRecorderProps {
+  getEnumerateDevices: () => void;
+}
+
+export interface IAudioViz {
+  // Allow audio viz to render with different renderer.
+  // RendererType.Canvas is good enough in most of the cases
+  rendererType: RendererType,
+  width: number,
+  height: number,
+  // Currently only support line chart
+  type: VizType,
+  // analyser: AnalyserNode,
+  // The audio viz are using streaming data, not static data
+  // dataValues: number[],
 }

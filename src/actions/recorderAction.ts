@@ -5,3 +5,9 @@ export function goToReady() {
     type: RecorderActionType.GO_TO_READY,
   };
 }
+
+export function getEnumerateDevices() {
+  return {
+    type: RecorderActionType.GET_ENUMERATE_DEVICES,
+  }
+}
