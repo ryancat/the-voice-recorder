@@ -22,9 +22,21 @@ export class Recorder extends React.Component<IRecorderProps> {
   // private audioContext: AudioContext = new AudioContext()
   // private chunks: any[] = []
 
+  state = {
+    audioVizWidth: 0,
+    audioVizHeight: 0,
+  }
+
   constructor(props: IRecorderProps) {
     super(props);
     // this.startAudioSource();
+  }
+
+  componentDidMount() {
+    this.setState({
+      audioVizWidth: this.containerRef.current ? this.containerRef.current.clientWidth : 0,
+      audioVizHeight: this.containerRef.current ? this.containerRef.current.clientHeight * 0.618 : 0,
+    })
   }
 
   // /**
@@ -64,8 +76,8 @@ export class Recorder extends React.Component<IRecorderProps> {
       <StyledRecorder ref={this.containerRef}>
         <AudioViz
           rendererType={RendererType.Canvas}
-          width={this.containerRef.current ? this.containerRef.current.offsetWidth : 0}
-          height={this.containerRef.current ? this.containerRef.current.offsetHeight * 0.618 : 0}
+          width={this.state.audioVizWidth}
+          height={this.state.audioVizHeight}
           type={VizType.Line}
           // analyser={this.analyser}
         ></AudioViz>

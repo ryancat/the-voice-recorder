@@ -2,12 +2,12 @@
 
 import React from 'react';
 import styled from 'styled-components';
+import { CanvasRenderer } from '../renderers/CanvasRenderer';
+import { SvgRenderer } from '../renderers/SvgRenderer';
 import { IAudioViz, RendererType, IRenderer, RendererElement } from '../types';
 
 const StyledAudioViz = styled.div`
   // Styles for AudioViz component
-  width: 100%;
-  height: 61.8%;
 `;
 
 export class AudioViz extends React.Component<IAudioViz> {
@@ -26,9 +26,14 @@ export class AudioViz extends React.Component<IAudioViz> {
   componentDidMount() {
     // Now the viz elements are available, we will need to connect them with the
     // corresponding renderer
+    this.updateRenderer();
 
     // When component mount, the viz element will be in DOM
     this.loopBatch.push(this.update.bind(this));    
+  }
+
+  componentDidUpdate() {
+    this.updateRenderer();
   }
 
   // checkRefs() {
@@ -65,35 +70,48 @@ export class AudioViz extends React.Component<IAudioViz> {
         this.renderer.drawToElement(this.vizElement);
       }
       
+      // Dirty the renderer to render on the next frame
       this.renderer.dirty = false;
     }
   }
 
-  // getVizElement() {
-  //   let element;
-    
-  //   // Switch to the correponding renderer.
-  //   // If not exist in cache, create one.
-  //   switch(this.props.rendererType) {
-  //     case RendererType.Canvas:
-  //       if (typeof this.cachedRendererMap[RendererType.Canvas] === 'undefined') {
-  //         element = <canvas ref={this.vizElementRef}></canvas>
-  //       }
+  updateRenderer() {
+    // Switch to the correponding renderer.
+    // If not exist in cache, create one.
+    switch(this.props.rendererType) {
+      case RendererType.Canvas:
+        if (typeof this.cachedRendererMap[RendererType.Canvas] === 'undefined') {
+          this.cachedRendererMap[RendererType.Canvas] = new CanvasRenderer();
+        }
         
-  //       this.renderer = this.cachedRendererMap[RendererType.Canvas];
-  //       break;
+        this.renderer = this.cachedRendererMap[RendererType.Canvas];
+        if (this.canvasRef.current) {
+          this.vizElement = this.canvasRef.current;
+        }
+        break;
 
-  //     case RendererType.SVG:
-  //       if (typeof this.cachedRendererMap[RendererType.SVG] === 'undefined') {
-  //         this.cachedRendererMap[RendererType.SVG] = new SvgRenderer();
-  //       }
+      case RendererType.SVG:
+        if (typeof this.cachedRendererMap[RendererType.SVG] === 'undefined') {
+          this.cachedRendererMap[RendererType.SVG] = new SvgRenderer();
+        }
 
-  //       this.renderer = this.cachedRendererMap[RendererType.SVG];
-  //       break;
+        this.renderer = this.cachedRendererMap[RendererType.SVG];
+        if (this.svgRef.current) {
+          this.vizElement = this.svgRef.current;
+        }
+        break;
 
-  //     default:
-  //       throw new Error(`Unexpected renderer type: ${this.props.rendererType}`)
-  //   }
+      default:
+        throw new Error(`Unexpected renderer type: ${this.props.rendererType}`)
+    }
+
+    if (!this.renderer) {
+      throw new Error('AudioViz renderer not found');
+    }
+
+    // Dirty the viz element
+    this.renderer.dirty = true;
+  }
 
 
   //   if (!this.renderer) {
@@ -109,9 +127,17 @@ export class AudioViz extends React.Component<IAudioViz> {
   render() {
     return (
       <StyledAudioViz>
-        <canvas ref={this.canvasRef}></canvas>
-        <svg ref={this.svgRef}></svg>
-        {/* {this.getVizElement()} */}
+        <canvas
+          ref={this.canvasRef}
+          style={{
+            display: this.props.rendererType === RendererType.Canvas ? 'block' : 'none'
+          }}></canvas>
+        <svg
+          ref={this.svgRef}
+          style={{
+            display: this.props.rendererType === RendererType.SVG ? 'block' : 'none'
+          }}
+        ></svg>
       </StyledAudioViz>
     )
   }

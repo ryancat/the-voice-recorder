@@ -6,7 +6,7 @@ export class CanvasRenderer implements IRenderer {
   dirty = false
   type = RendererType.Canvas
 
-  constructor(options: IRendererOptions) {
+  constructor(options?: IRendererOptions) {
   }
 
   resize(width: number, height: number, element = this.offscreenElement): void {
